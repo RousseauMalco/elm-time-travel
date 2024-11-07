@@ -86,7 +86,7 @@ bulletShape =
 
 view computer model =
   [rectangle black computer.screen.width computer.screen.height]
-    ++ [words white ("Shots: " ++ (String.fromInt model.shotsFired)) |> moveY (computer.screen.top - 20)]
+    ++ [words white ("Shots: " ++ (String.fromInt model.shotsFired)) |> moveY (computer.screen.top - 75)]
     ++ [model.ship      |> viewGameObject shipColor 1.0]
     ++ (model.asteroids |> List.map (viewGameObject asteroidColor 0.7))
     ++ (model.bullets   |> List.map (viewGameObject bulletColor 1.0))
