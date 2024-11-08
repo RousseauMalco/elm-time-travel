@@ -6,7 +6,6 @@ import Set
 controlBarHeight = 64
 
 addTimeTravel rawGame = 
-
     {initialState = initialStateWithTimeTravel rawGame
     , updateState = updateWithTimeTravel rawGame 
     , view = viewWithTimeTravel rawGame}
@@ -20,6 +19,10 @@ initialStateWithTimeTravel rawGame =
 
 updateWithTimeTravel rawGame computer model =
 
+    if keyPressed "C" computer then
+      initialStateWithTimeTravel rawGame
+    else
+
     if keyPressed "T" computer then
         {model | paused = True}
     else
@@ -31,7 +34,7 @@ updateWithTimeTravel rawGame computer model =
     if model.paused && computer.mouse.down then
         let
             newPlaybackPosition = min (mousePosToHistoryIndex computer) (List.length model.history)
-            replayHistory pastInputs = List.foldl rawGame.updateState rawGame.initialState model.history
+            replayHistory pastInputs = List.foldl rawGame.updateState rawGame.initialState pastInputs
         in
         {model | historyPlaybackPosition = newPlaybackPosition
         , rawModel = replayHistory (List.take newPlaybackPosition model.history)
@@ -42,7 +45,6 @@ updateWithTimeTravel rawGame computer model =
         { model | rawModel = rawGame.updateState computer model.rawModel
         , history = model.history ++ [computer]
         , historyPlaybackPosition = (List.length model.history) + 1 }
-        
 
 
 viewWithTimeTravel rawGame computer model =
@@ -66,7 +68,7 @@ viewWithTimeTravel rawGame computer model =
 
     dragMessage = 
       if model.paused then
-          "Click in the purple bar to turn back time!"
+          "Drag in the purple bar to turn back time!"
         else
           ""
   in
@@ -79,6 +81,9 @@ viewWithTimeTravel rawGame computer model =
       ]
         ++ [ words white helpMessage
           |> move 0 (computer.screen.top - controlBarHeight / 2)
+      ]
+      ++ [ words white "Press C to reset the game"
+          |> move 0 (computer.screen.top - controlBarHeight / 2 - 20)
       ]
 
 
@@ -99,3 +104,4 @@ keyPressed keyName computer =
   , String.toUpper keyName
   ]
     |> List.any (\key -> Set.member key computer.keyboard.keys)
+  
